@@ -137,9 +137,9 @@ namespace RavenfieldCheater
             Application.DoEvents(); // Lets the program catch up
 
             MethodDefinition UpdateMethod = FpsActorControllerClass.Methods.First(m => m.Name == "Update"); // Finds FpsActorControllerClass.Update()
-            if (UpdateMethod == null) // If FpsActorControllerClass.Update() does not exist, stop
+            if (UpdateMethod == null) // If FpsActorController.Update() does not exist, stop
             {
-                MessageBox.Show("FpsActorControllerClass.Update() Method Not Found!");
+                MessageBox.Show("FpsActorController.Update() Method Not Found!");
                 return;
             }
             Application.DoEvents();
@@ -172,6 +172,69 @@ namespace RavenfieldCheater
             }
             MessageBox.Show("Fast Motion Added Successfully!");
             Application.DoEvents();
+        }
+
+        private void Ammo_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Health_Click(object sender, EventArgs e)
+        {
+            /*if (filePath == null) { MessageBox.Show("Please select the folder Ravenfield is in."); return; }
+
+            assembly = ModuleDefinition.ReadModule(filePath); // Load Assembly-CSharp.dll
+
+            TypeDefinition ActorClass = assembly.Types.First(t => t.Name == "Actor"); // Finds Actor class (no namespace) in Assembly-CSharp.dll
+            if (ActorClass == null) // If Actor does not exist, stop
+            {
+                MessageBox.Show("Actor Class Class Not Found!");
+                return;
+            }
+            Application.DoEvents(); // Lets the program catch up
+
+            MethodDefinition UpdateMethod = ActorClass.Methods.First(m => m.Name == "Update"); // Finds FpsActorController.Update()
+            if (UpdateMethod == null) // If Actor.Update() does not exist, stop
+            {
+                MessageBox.Show("Actor.Update() Method Not Found!");
+                return;
+            }
+            Application.DoEvents();
+
+            ILProcessor processor = UpdateMethod.Body.GetILProcessor();
+
+            //FieldDefinition ActorHealth = ActorClass.Fields.First(f => f.Name == "health"); // Finds health for reference
+            FieldReference ActorHealth = ActorClass.Fields.First<FieldReference>(f => f.Name == "health");
+
+            // Inserts stfld, ldc.r4,  ildarg.0 into Actor.Update()
+            Instruction[] instructions = processor.Body.Instructions.ToArray();
+            Instruction lastInstruc = instructions[instructions.Length - 1];
+
+            Instruction insertInstruc = processor.Create(OpCodes.Stfld, ActorHealth);
+            //insertInstruc.Operand = ActorHealth; // float32 Actor::health
+            processor.InsertBefore(lastInstruc, insertInstruc);
+
+            lastInstruc = insertInstruc;
+            insertInstruc = processor.Create(OpCodes.Ldc_I4, 1000f);
+            //insertInstruc.Operand = 1000f;
+            processor.InsertBefore(lastInstruc, insertInstruc);
+
+            lastInstruc = insertInstruc;
+            insertInstruc = processor.Create(OpCodes.Ldarg_0);
+            processor.InsertBefore(lastInstruc, insertInstruc);
+
+            try
+            {
+                assembly.Write(filePath); // Try to write it back to Assembly-CSharp.dll
+            }
+            catch (Mono.Cecil.AssemblyResolutionException error)
+            {
+                MessageBox.Show(error.Message);
+                return;
+            }
+            MessageBox.Show("Infinite Health Added Successfully!");
+            Application.DoEvents();
+            */
         }
     }
 }

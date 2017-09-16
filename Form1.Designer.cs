@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RavenfieldCheater));
             this.Folder = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.Backup = new System.Windows.Forms.Button();
@@ -112,21 +113,23 @@
             // 
             // Ammo
             // 
-            this.Ammo.Location = new System.Drawing.Point(117, 162);
+            this.Ammo.Location = new System.Drawing.Point(252, 162);
             this.Ammo.Name = "Ammo";
             this.Ammo.Size = new System.Drawing.Size(129, 23);
             this.Ammo.TabIndex = 7;
             this.Ammo.Text = "Infinite Ammo (WIP)";
             this.Ammo.UseVisualStyleBackColor = true;
+            this.Ammo.Click += new System.EventHandler(this.Ammo_Click);
             // 
             // Health
             // 
-            this.Health.Location = new System.Drawing.Point(252, 162);
+            this.Health.Location = new System.Drawing.Point(117, 162);
             this.Health.Name = "Health";
             this.Health.Size = new System.Drawing.Size(129, 23);
             this.Health.TabIndex = 8;
             this.Health.Text = "Infinite Health (WIP)";
             this.Health.UseVisualStyleBackColor = true;
+            this.Health.Click += new System.EventHandler(this.Health_Click);
             // 
             // RavenfieldCheater
             // 
@@ -142,6 +145,7 @@
             this.Controls.Add(this.Backup);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Folder);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "RavenfieldCheater";
             this.Text = "Ravenfield Cheater";
             this.ResumeLayout(false);
