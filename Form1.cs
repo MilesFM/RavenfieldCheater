@@ -181,7 +181,7 @@ namespace RavenfieldCheater
 
         private void Health_Click(object sender, EventArgs e)
         {
-            /*if (filePath == null) { MessageBox.Show("Please select the folder Ravenfield is in."); return; }
+            if (filePath == null) { MessageBox.Show("Please select the folder Ravenfield is in."); return; }
 
             assembly = ModuleDefinition.ReadModule(filePath); // Load Assembly-CSharp.dll
 
@@ -203,20 +203,32 @@ namespace RavenfieldCheater
 
             ILProcessor processor = UpdateMethod.Body.GetILProcessor();
 
-            //FieldDefinition ActorHealth = ActorClass.Fields.First(f => f.Name == "health"); // Finds health for reference
-            FieldReference ActorHealth = ActorClass.Fields.First<FieldReference>(f => f.Name == "health");
+            FieldReference ActorHealth = ActorClass.Fields.First<FieldReference>(f => f.Name == "health");// Finds health for reference
+            FieldReference Actor_aiControlled = ActorClass.Fields.First<FieldReference>(f => f.Name == "aiControlled");// Finds aiControlled for reference
 
-            // Inserts stfld, ldc.r4,  ildarg.0 into Actor.Update()
+
+
+            // Inserts a if statment to check if Actor is AI, if not, make health 1000f
             Instruction[] instructions = processor.Body.Instructions.ToArray();
-            Instruction lastInstruc = instructions[instructions.Length - 1];
 
+            Instruction lastInstruc = instructions[instructions.Length - 1];
             Instruction insertInstruc = processor.Create(OpCodes.Stfld, ActorHealth);
-            //insertInstruc.Operand = ActorHealth; // float32 Actor::health
             processor.InsertBefore(lastInstruc, insertInstruc);
 
             lastInstruc = insertInstruc;
-            insertInstruc = processor.Create(OpCodes.Ldc_I4, 1000f);
-            //insertInstruc.Operand = 1000f;
+            insertInstruc = processor.Create(OpCodes.Ldc_R4, 1000f);
+            processor.InsertBefore(lastInstruc, insertInstruc);
+
+            lastInstruc = insertInstruc;
+            insertInstruc = processor.Create(OpCodes.Ldarg_0);
+            processor.InsertBefore(lastInstruc, insertInstruc);
+
+            lastInstruc = insertInstruc;
+            insertInstruc = processor.Create(OpCodes.Brtrue_S, instructions[instructions.Length - 1]);
+            processor.InsertBefore(lastInstruc, insertInstruc);
+
+            lastInstruc = insertInstruc;
+            insertInstruc = processor.Create(OpCodes.Ldfld, Actor_aiControlled);
             processor.InsertBefore(lastInstruc, insertInstruc);
 
             lastInstruc = insertInstruc;
@@ -234,7 +246,6 @@ namespace RavenfieldCheater
             }
             MessageBox.Show("Infinite Health Added Successfully!");
             Application.DoEvents();
-            */
         }
     }
 }

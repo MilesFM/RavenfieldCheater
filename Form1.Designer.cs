@@ -38,6 +38,8 @@
             this.Fast = new System.Windows.Forms.Button();
             this.Ammo = new System.Windows.Forms.Button();
             this.Health = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Folder
@@ -113,7 +115,7 @@
             // 
             // Ammo
             // 
-            this.Ammo.Location = new System.Drawing.Point(252, 162);
+            this.Ammo.Location = new System.Drawing.Point(252, 176);
             this.Ammo.Name = "Ammo";
             this.Ammo.Size = new System.Drawing.Size(129, 23);
             this.Ammo.TabIndex = 7;
@@ -127,15 +129,35 @@
             this.Health.Name = "Health";
             this.Health.Size = new System.Drawing.Size(129, 23);
             this.Health.TabIndex = 8;
-            this.Health.Text = "Infinite Health (WIP)";
+            this.Health.Text = "Infinite Health";
             this.Health.UseVisualStyleBackColor = true;
             this.Health.Click += new System.EventHandler(this.Health_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(86, 205);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(160, 23);
+            this.button1.TabIndex = 9;
+            this.button1.Text = "Levels Folder Re-Add (WIP)";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(252, 205);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(178, 23);
+            this.button2.TabIndex = 10;
+            this.button2.Text = "Secret Weapons Unlocked (WIP)";
+            this.button2.UseVisualStyleBackColor = true;
             // 
             // RavenfieldCheater
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(506, 217);
+            this.ClientSize = new System.Drawing.Size(506, 240);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.Health);
             this.Controls.Add(this.Ammo);
             this.Controls.Add(this.Fast);
@@ -164,6 +186,8 @@
         private System.Windows.Forms.Button Fast;
         private System.Windows.Forms.Button Ammo;
         private System.Windows.Forms.Button Health;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
     }
 }
 
