@@ -119,7 +119,7 @@
             this.Ammo.Name = "Ammo";
             this.Ammo.Size = new System.Drawing.Size(129, 23);
             this.Ammo.TabIndex = 7;
-            this.Ammo.Text = "Infinite Ammo";
+            this.Ammo.Text = "Infinite Ammo (WIP)";
             this.Ammo.UseVisualStyleBackColor = true;
             this.Ammo.Click += new System.EventHandler(this.Ammo_Click);
             // 
