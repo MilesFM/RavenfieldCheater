@@ -177,6 +177,77 @@ namespace RavenfieldCheater
         private void Ammo_Click(object sender, EventArgs e)
         {
 
+            assembly = ModuleDefinition.ReadModule(filePath); // Load Assembly-CSharp.dll
+
+            TypeDefinition WeaponClass = assembly.Types.First(t => t.Name == "Weapon"); // Finds Weapon class (no namespace) in Assembly-CSharp.dll
+            if (WeaponClass == null) // If Actor does not exist, stop
+            {
+                MessageBox.Show("Weapon Class Class Not Found!");
+                return;
+            }
+            Application.DoEvents(); // Lets the program catch up
+
+            MethodDefinition UpdateMethod = WeaponClass.Methods.First(m => m.Name == "Update"); // Finds Weapon.Update()
+            if (UpdateMethod == null) // If Weapon.Update() does not exist, stop
+            {
+                MessageBox.Show("Weapon.Update() Method Not Found!");
+                return;
+            }
+            Application.DoEvents();
+
+            ILProcessor processor = UpdateMethod.Body.GetILProcessor();
+
+            FieldReference WeaponAmmo = WeaponClass.Fields.First<FieldReference>(f => f.Name == "ammo");// Finds ammo for reference
+            MethodReference WeaponUserIsPlayer = WeaponClass.Methods.First<MethodReference>(m => m.Name == "UserIsPlayer");// Finds UserIsPlayer() for reference
+
+
+
+            // Inserts a if statment to check if Actor is Player, if so, make ammo 1000
+            Instruction[] instructions = processor.Body.Instructions.ToArray();
+
+            Instruction lastInstruc = instructions[instructions.Length-1];
+            Instruction insertInstruc = processor.Create(OpCodes.Stfld, WeaponAmmo);
+            processor.InsertBefore(lastInstruc, insertInstruc);
+
+            lastInstruc = insertInstruc;
+            insertInstruc = processor.Create(OpCodes.Ldc_I4, 1000);
+            processor.InsertBefore(lastInstruc, insertInstruc);
+
+            lastInstruc = insertInstruc;
+            insertInstruc = processor.Create(OpCodes.Ldarg_0);
+            processor.InsertBefore(lastInstruc, insertInstruc);
+
+            lastInstruc = insertInstruc;
+            insertInstruc = processor.Create(OpCodes.Brfalse_S, instructions[instructions.Length - 1]);
+            processor.InsertBefore(lastInstruc, insertInstruc);
+
+            lastInstruc = insertInstruc;
+            insertInstruc = processor.Create(OpCodes.Call, WeaponUserIsPlayer);
+            processor.InsertBefore(lastInstruc, insertInstruc);
+
+            lastInstruc = insertInstruc;
+            insertInstruc = processor.Create(OpCodes.Ldarg_0);
+            processor.InsertBefore(lastInstruc, insertInstruc);
+
+            // So the if loop doesn't end up in another if statement
+            if (WeaponClass.Methods.First<MethodReference>(m => m.Name == "UpdateHeath") == null && instructions[57].OpCode == OpCodes.Brfalse)
+            {
+                Instruction replace = instructions[57];
+                replace.Operand = insertInstruc;
+                processor.Replace(instructions[57], replace);
+            }
+
+            try
+            {
+                assembly.Write(filePath); // Try to write it back to Assembly-CSharp.dll
+            }
+            catch (Mono.Cecil.AssemblyResolutionException error)
+            {
+                MessageBox.Show(error.Message);
+                return;
+            }
+            MessageBox.Show("Infinite Ammo Added Successfully!");
+            Application.DoEvents();
         }
 
         private void Health_Click(object sender, EventArgs e)
@@ -204,7 +275,7 @@ namespace RavenfieldCheater
             ILProcessor processor = UpdateMethod.Body.GetILProcessor();
 
             FieldReference ActorHealth = ActorClass.Fields.First<FieldReference>(f => f.Name == "health");// Finds health for reference
-            FieldReference Actor_aiControlled = ActorClass.Fields.First<FieldReference>(f => f.Name == "aiControlled");// Finds aiControlled for reference
+            FieldReference ActorAiControlled = ActorClass.Fields.First<FieldReference>(f => f.Name == "aiControlled");// Finds aiControlled for reference
 
 
 
@@ -228,7 +299,7 @@ namespace RavenfieldCheater
             processor.InsertBefore(lastInstruc, insertInstruc);
 
             lastInstruc = insertInstruc;
-            insertInstruc = processor.Create(OpCodes.Ldfld, Actor_aiControlled);
+            insertInstruc = processor.Create(OpCodes.Ldfld, ActorAiControlled);
             processor.InsertBefore(lastInstruc, insertInstruc);
 
             lastInstruc = insertInstruc;

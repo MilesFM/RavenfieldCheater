@@ -38,8 +38,8 @@
             this.Fast = new System.Windows.Forms.Button();
             this.Ammo = new System.Windows.Forms.Button();
             this.Health = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.LevelsFolder = new System.Windows.Forms.Button();
+            this.SecretWeapons = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Folder
@@ -115,11 +115,11 @@
             // 
             // Ammo
             // 
-            this.Ammo.Location = new System.Drawing.Point(252, 176);
+            this.Ammo.Location = new System.Drawing.Point(252, 162);
             this.Ammo.Name = "Ammo";
             this.Ammo.Size = new System.Drawing.Size(129, 23);
             this.Ammo.TabIndex = 7;
-            this.Ammo.Text = "Infinite Ammo (WIP)";
+            this.Ammo.Text = "Infinite Ammo";
             this.Ammo.UseVisualStyleBackColor = true;
             this.Ammo.Click += new System.EventHandler(this.Ammo_Click);
             // 
@@ -133,31 +133,31 @@
             this.Health.UseVisualStyleBackColor = true;
             this.Health.Click += new System.EventHandler(this.Health_Click);
             // 
-            // button1
+            // LevelsFolder
             // 
-            this.button1.Location = new System.Drawing.Point(86, 205);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(160, 23);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "Levels Folder Re-Add (WIP)";
-            this.button1.UseVisualStyleBackColor = true;
+            this.LevelsFolder.Location = new System.Drawing.Point(86, 205);
+            this.LevelsFolder.Name = "LevelsFolder";
+            this.LevelsFolder.Size = new System.Drawing.Size(160, 23);
+            this.LevelsFolder.TabIndex = 9;
+            this.LevelsFolder.Text = "Levels Folder Re-Add (WIP)";
+            this.LevelsFolder.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // SecretWeapons
             // 
-            this.button2.Location = new System.Drawing.Point(252, 205);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(178, 23);
-            this.button2.TabIndex = 10;
-            this.button2.Text = "Secret Weapons Unlocked (WIP)";
-            this.button2.UseVisualStyleBackColor = true;
+            this.SecretWeapons.Location = new System.Drawing.Point(252, 205);
+            this.SecretWeapons.Name = "SecretWeapons";
+            this.SecretWeapons.Size = new System.Drawing.Size(178, 23);
+            this.SecretWeapons.TabIndex = 10;
+            this.SecretWeapons.Text = "Secret Weapons Unlocked (WIP)";
+            this.SecretWeapons.UseVisualStyleBackColor = true;
             // 
             // RavenfieldCheater
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(506, 240);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.SecretWeapons);
+            this.Controls.Add(this.LevelsFolder);
             this.Controls.Add(this.Health);
             this.Controls.Add(this.Ammo);
             this.Controls.Add(this.Fast);
@@ -186,8 +186,8 @@
         private System.Windows.Forms.Button Fast;
         private System.Windows.Forms.Button Ammo;
         private System.Windows.Forms.Button Health;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button LevelsFolder;
+        private System.Windows.Forms.Button SecretWeapons;
     }
 }
 
