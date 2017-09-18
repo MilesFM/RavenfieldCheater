@@ -193,21 +193,20 @@ namespace RavenfieldCheater
                 MessageBox.Show("Weapon.Update() Method Not Found!");
                 return;
             }
-            Application.DoEvents();
 
             ILProcessor processor = UpdateMethod.Body.GetILProcessor();
 
             FieldReference WeaponAmmo = WeaponClass.Fields.First<FieldReference>(f => f.Name == "ammo");// Finds ammo for reference
             MethodReference WeaponUserIsPlayer = WeaponClass.Methods.First<MethodReference>(m => m.Name == "UserIsPlayer");// Finds UserIsPlayer() for reference
 
-
-
+            
             // Inserts a if statment to check if Actor is Player, if so, make ammo 1000
             Instruction[] instructions = processor.Body.Instructions.ToArray();
 
             Instruction lastInstruc = instructions[instructions.Length-1];
             Instruction insertInstruc = processor.Create(OpCodes.Stfld, WeaponAmmo);
             processor.InsertBefore(lastInstruc, insertInstruc);
+
 
             lastInstruc = insertInstruc;
             insertInstruc = processor.Create(OpCodes.Ldc_I4, 1000);
@@ -230,9 +229,8 @@ namespace RavenfieldCheater
             processor.InsertBefore(lastInstruc, insertInstruc);
 
             // So the if loop doesn't end up in another if statement
-            MethodReference UpdateHealth = WeaponClass.Methods.First<MethodReference>(m => m.Name == "UpdateHeat");
             Instruction LastIf = instructions[57];
-            if (UpdateHealth == null && LastIf.OpCode == OpCodes.Brfalse)
+            if (LastIf.OpCode == OpCodes.Brfalse)
             {
                 Instruction replace = LastIf;
                 replace.Operand = insertInstruc;
