@@ -230,11 +230,13 @@ namespace RavenfieldCheater
             processor.InsertBefore(lastInstruc, insertInstruc);
 
             // So the if loop doesn't end up in another if statement
-            if (WeaponClass.Methods.First<MethodReference>(m => m.Name == "UpdateHeath") == null && instructions[57].OpCode == OpCodes.Brfalse)
+            MethodReference UpdateHealth = WeaponClass.Methods.First<MethodReference>(m => m.Name == "UpdateHeat");
+            Instruction LastIf = instructions[57];
+            if (UpdateHealth == null && LastIf.OpCode == OpCodes.Brfalse)
             {
-                Instruction replace = instructions[57];
+                Instruction replace = LastIf;
                 replace.Operand = insertInstruc;
-                processor.Replace(instructions[57], replace);
+                processor.Replace(LastIf, replace);
             }
 
             try
