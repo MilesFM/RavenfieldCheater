@@ -115,7 +115,7 @@
             // 
             // Ammo
             // 
-            this.Ammo.Location = new System.Drawing.Point(252, 162);
+            this.Ammo.Location = new System.Drawing.Point(117, 162);
             this.Ammo.Name = "Ammo";
             this.Ammo.Size = new System.Drawing.Size(129, 23);
             this.Ammo.TabIndex = 7;
@@ -125,7 +125,7 @@
             // 
             // Health
             // 
-            this.Health.Location = new System.Drawing.Point(117, 162);
+            this.Health.Location = new System.Drawing.Point(252, 162);
             this.Health.Name = "Health";
             this.Health.Size = new System.Drawing.Size(129, 23);
             this.Health.TabIndex = 8;
@@ -135,21 +135,22 @@
             // 
             // LevelsFolder
             // 
-            this.LevelsFolder.Location = new System.Drawing.Point(86, 205);
+            this.LevelsFolder.Location = new System.Drawing.Point(252, 191);
             this.LevelsFolder.Name = "LevelsFolder";
-            this.LevelsFolder.Size = new System.Drawing.Size(160, 23);
+            this.LevelsFolder.Size = new System.Drawing.Size(180, 23);
             this.LevelsFolder.TabIndex = 9;
             this.LevelsFolder.Text = "Levels Folder Re-Add (WIP)";
             this.LevelsFolder.UseVisualStyleBackColor = true;
             // 
             // SecretWeapons
             // 
-            this.SecretWeapons.Location = new System.Drawing.Point(252, 205);
+            this.SecretWeapons.Location = new System.Drawing.Point(66, 191);
             this.SecretWeapons.Name = "SecretWeapons";
-            this.SecretWeapons.Size = new System.Drawing.Size(178, 23);
+            this.SecretWeapons.Size = new System.Drawing.Size(180, 23);
             this.SecretWeapons.TabIndex = 10;
             this.SecretWeapons.Text = "Secret Weapons Unlocked (WIP)";
             this.SecretWeapons.UseVisualStyleBackColor = true;
+            this.SecretWeapons.Click += new System.EventHandler(this.SecretWeapons_Click);
             // 
             // RavenfieldCheater
             // 

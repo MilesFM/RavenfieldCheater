@@ -22,11 +22,6 @@ namespace RavenfieldCheater
             InitializeComponent();
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog selectDLL = new FolderBrowserDialog();
@@ -229,8 +224,11 @@ namespace RavenfieldCheater
             processor.InsertBefore(lastInstruc, insertInstruc);
 
             // So the if loop doesn't end up in another if statement
-            Instruction LastIf = instructions[57];
-            if (LastIf.OpCode == OpCodes.Brfalse)
+            Instruction LastIf = instructions[instructions.Length - 4];
+            //Instruction LastIf = instructions[57];
+            //MessageBox.Show(instructions[instructions.Length-4].ToString());
+            Application.DoEvents();
+            if (LastIf.OpCode == OpCodes.Brfalse || LastIf.OpCode == OpCodes.Brtrue)
             {
                 Instruction replace = LastIf;
                 replace.Operand = insertInstruc;
@@ -264,7 +262,7 @@ namespace RavenfieldCheater
             }
             Application.DoEvents(); // Lets the program catch up
 
-            MethodDefinition UpdateMethod = ActorClass.Methods.First(m => m.Name == "Update"); // Finds FpsActorController.Update()
+            MethodDefinition UpdateMethod = ActorClass.Methods.First(m => m.Name == "Update"); // Finds Actor.Update()
             if (UpdateMethod == null) // If Actor.Update() does not exist, stop
             {
                 MessageBox.Show("Actor.Update() Method Not Found!");
@@ -277,7 +275,7 @@ namespace RavenfieldCheater
             FieldReference ActorHealth = ActorClass.Fields.First<FieldReference>(f => f.Name == "health");// Finds health for reference
             FieldReference ActorAiControlled = ActorClass.Fields.First<FieldReference>(f => f.Name == "aiControlled");// Finds aiControlled for reference
 
-
+            
 
             // Inserts a if statment to check if Actor is AI, if not, make health 1000f
             Instruction[] instructions = processor.Body.Instructions.ToArray();
@@ -317,6 +315,38 @@ namespace RavenfieldCheater
             }
             MessageBox.Show("Infinite Health Added Successfully!");
             Application.DoEvents();
+        }
+
+        private void SecretWeapons_Click(object sender, EventArgs e)
+        {
+            if (filePath == null) { MessageBox.Show("Please select the folder Ravenfield is in."); return; }
+
+            assembly = ModuleDefinition.ReadModule(filePath); // Load Assembly-CSharp.dll
+
+            TypeDefinition WeaponManagerClass = assembly.Types.First(t => t.Name == "WeaponManager"); // Finds WeaponManager class (no namespace) in Assembly-CSharp.dll
+            if (WeaponManagerClass == null) // If WeaponManager does not exist, stop
+            {
+                MessageBox.Show("WeaponManager Class Class Not Found!");
+                return;
+            }
+            Application.DoEvents(); // Lets the program catch up
+
+            MethodDefinition AwakeMethod = WeaponManagerClass.Methods.First(m => m.Name == "Awake"); // Finds WeaponManager.Awake()
+            if (AwakeMethod == null) // If WeaponManager.Awake() does not exist, stop
+            {
+                MessageBox.Show("WeaponManager.Awake() Method Not Found!");
+                return;
+            }
+            Application.DoEvents();
+
+            ILProcessor processor = AwakeMethod.Body.GetILProcessor();
+
+            Instruction[] instructions = processor.Body.Instructions.ToArray();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
