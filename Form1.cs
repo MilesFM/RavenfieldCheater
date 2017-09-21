@@ -192,9 +192,48 @@ namespace RavenfieldCheater
             ILProcessor processor = UpdateMethod.Body.GetILProcessor();
 
             FieldReference WeaponAmmo = WeaponClass.Fields.First<FieldReference>(f => f.Name == "ammo");// Finds ammo for reference
-            MethodReference WeaponUserIsPlayer = WeaponClass.Methods.First<MethodReference>(m => m.Name == "UserIsPlayer");// Finds UserIsPlayer() for reference
+            MethodReference WeaponUserIsPlayer;
+            try
+            {
+                WeaponUserIsPlayer = WeaponClass.Methods.First<MethodReference>(m => m.Name == "UserIsPlayer"); // Finds UserIsPlayer() for reference
+            }
+            catch (Exception exc) // If Weapon.UserIsPlayer() does not exist, create it
+            {
+                MessageBox.Show("Weapon.UserIsPlayer() not found, creating");
+                MethodDefinition method = new MethodDefinition("UserIsPlayer", MethodAttributes.Public, assembly.TypeSystem.Boolean);
+                WeaponClass.Methods.Add(method);
+                ILProcessor ilProc = method.Body.GetILProcessor();
+                FieldReference user = WeaponClass.Fields.First<FieldReference>(f => f.Name == "user");
+                FieldReference aiControlled = assembly.Types.First<TypeDefinition>(t => t.Name == "Actor")
+                                                                                  .Fields.First(f => f.Name == "aiControlled");
+                MethodReference uIneq = assembly.Import(typeof(UnityEngine.Object).GetMethod("op_Inequality", new[] { typeof(UnityEngine.Object), typeof(UnityEngine.Object) }));
 
-            
+                Instruction[] structs = new Instruction[13];
+                structs[11] = ilProc.Create(OpCodes.Ldc_I4_0);
+                structs[12] = ilProc.Create(OpCodes.Ret);
+                structs = new Instruction[13]
+                {
+                    ilProc.Create(OpCodes.Ldarg_0),
+                    ilProc.Create(OpCodes.Ldfld, user),
+                    ilProc.Create(OpCodes.Ldnull),
+                    ilProc.Create(OpCodes.Call, uIneq),
+                    ilProc.Create(OpCodes.Brfalse, structs[11]),
+                    ilProc.Create(OpCodes.Ldarg_0),
+                    ilProc.Create(OpCodes.Ldfld, user),
+                    ilProc.Create(OpCodes.Ldfld, aiControlled),
+                    ilProc.Create(OpCodes.Ldc_I4_0),
+                    ilProc.Create(OpCodes.Ceq),
+                    ilProc.Create(OpCodes.Br_S, structs[12]),
+                    ilProc.Create(OpCodes.Ldc_I4_0),
+                    ilProc.Create(OpCodes.Ret)
+                };
+                foreach (Instruction i in structs) method.Body.Instructions.Add(i);
+                method.Body.Instructions[4] = ilProc.Create(OpCodes.Brfalse, method.Body.Instructions[11]); // pointing Break If instructions to the right place
+                method.Body.Instructions[10] = ilProc.Create(OpCodes.Br_S, method.Body.Instructions[12]);
+                WeaponUserIsPlayer = WeaponClass.Methods.First<MethodReference>(m => m.Name == "UserIsPlayer");
+            }
+
+
             // Inserts a if statment to check if Actor is Player, if so, make ammo 1000
             Instruction[] instructions = processor.Body.Instructions.ToArray();
 
