@@ -22,6 +22,11 @@ namespace RavenfieldCheater
             InitializeComponent();
         }
 
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog selectDLL = new FolderBrowserDialog();
@@ -61,7 +66,7 @@ namespace RavenfieldCheater
                 if (File.Exists(filePath))
                 {
                     File.Delete(filePath);
-                    
+
                 }
                 File.Copy(filePath + ".bak", filePath);
                 MessageBox.Show("Restore Complete!");
@@ -144,7 +149,7 @@ namespace RavenfieldCheater
             Instruction original = processor.Body.Instructions[212];
 
             // Changes if (Time.timeScale < 1f) to a > sign
-            Instruction replace = original; 
+            Instruction replace = original;
             replace.OpCode = OpCodes.Ble_Un;
 
             processor.Replace(original, replace);
@@ -192,13 +197,51 @@ namespace RavenfieldCheater
             ILProcessor processor = UpdateMethod.Body.GetILProcessor();
 
             FieldReference WeaponAmmo = WeaponClass.Fields.First<FieldReference>(f => f.Name == "ammo");// Finds ammo for reference
-            MethodReference WeaponUserIsPlayer = WeaponClass.Methods.First<MethodReference>(m => m.Name == "UserIsPlayer");// Finds UserIsPlayer() for reference
+            MethodReference WeaponUserIsPlayer;
+            try
+            {
+                WeaponUserIsPlayer = WeaponClass.Methods.First<MethodReference>(m => m.Name == "UserIsPlayer");// Finds UserIsPlayer() for reference
+            }
+            catch (Exception exc) // If Weapon.UserIsPlayer() does not exist, create it
+            {
+                MessageBox.Show("Weapon.UserIsPlayer() not found, creating");
+                MethodDefinition method = new MethodDefinition("UserIsPlayer", MethodAttributes.Public, assembly.TypeSystem.Boolean);
+                WeaponClass.Methods.Add(method);
+                ILProcessor ilProc = method.Body.GetILProcessor();
+                FieldReference user = WeaponClass.Fields.First<FieldReference>(f => f.Name == "user");
+                FieldReference aiControlled = assembly.Types.First<TypeDefinition>(t => t.Name == "Actor")
+                                                                                  .Fields.First(f => f.Name == "aiControlled");
+                MethodReference uIneq = assembly.Import(typeof(UnityEngine.Object).GetMethod("op_Inequality", new[] { typeof(UnityEngine.Object), typeof(UnityEngine.Object) }));
 
-            
+                Instruction[] structs = new Instruction[13];
+                structs[11] = ilProc.Create(OpCodes.Ldc_I4_0);
+                structs[12] = ilProc.Create(OpCodes.Ret);
+                structs = new Instruction[13]
+                {
+                    ilProc.Create(OpCodes.Ldarg_0),
+                    ilProc.Create(OpCodes.Ldfld, user),
+                    ilProc.Create(OpCodes.Ldnull),
+                    ilProc.Create(OpCodes.Call, uIneq),
+                    ilProc.Create(OpCodes.Brfalse, structs[11]),
+                    ilProc.Create(OpCodes.Ldarg_0),
+                    ilProc.Create(OpCodes.Ldfld, user),
+                    ilProc.Create(OpCodes.Ldfld, aiControlled),
+                    ilProc.Create(OpCodes.Ldc_I4_0),
+                    ilProc.Create(OpCodes.Ceq),
+                    ilProc.Create(OpCodes.Br_S, structs[12]),
+                    ilProc.Create(OpCodes.Ldc_I4_0),
+                    ilProc.Create(OpCodes.Ret)
+                };
+                foreach (Instruction i in structs) method.Body.Instructions.Add(i);
+                method.Body.Instructions[4] = ilProc.Create(OpCodes.Brfalse, method.Body.Instructions[11]); // pointing Break If instructions to the right place
+                method.Body.Instructions[10] = ilProc.Create(OpCodes.Br_S, method.Body.Instructions[12]);
+                WeaponUserIsPlayer = WeaponClass.Methods.First<MethodReference>(m => m.Name == "UserIsPlayer");
+            }
+
             // Inserts a if statment to check if Actor is Player, if so, make ammo 1000
             Instruction[] instructions = processor.Body.Instructions.ToArray();
 
-            Instruction lastInstruc = instructions[instructions.Length-1];
+            Instruction lastInstruc = instructions[instructions.Length - 1];
             Instruction insertInstruc = processor.Create(OpCodes.Stfld, WeaponAmmo);
             processor.InsertBefore(lastInstruc, insertInstruc);
 
@@ -224,11 +267,8 @@ namespace RavenfieldCheater
             processor.InsertBefore(lastInstruc, insertInstruc);
 
             // So the if loop doesn't end up in another if statement
-            Instruction LastIf = instructions[instructions.Length - 4];
-            //Instruction LastIf = instructions[57];
-            //MessageBox.Show(instructions[instructions.Length-4].ToString());
-            Application.DoEvents();
-            if (LastIf.OpCode == OpCodes.Brfalse || LastIf.OpCode == OpCodes.Brtrue)
+            Instruction LastIf = instructions[57];
+            if (LastIf.OpCode == OpCodes.Brfalse)
             {
                 Instruction replace = LastIf;
                 replace.Operand = insertInstruc;
@@ -262,7 +302,7 @@ namespace RavenfieldCheater
             }
             Application.DoEvents(); // Lets the program catch up
 
-            MethodDefinition UpdateMethod = ActorClass.Methods.First(m => m.Name == "Update"); // Finds Actor.Update()
+            MethodDefinition UpdateMethod = ActorClass.Methods.First(m => m.Name == "Update"); // Finds FpsActorController.Update()
             if (UpdateMethod == null) // If Actor.Update() does not exist, stop
             {
                 MessageBox.Show("Actor.Update() Method Not Found!");
@@ -275,7 +315,7 @@ namespace RavenfieldCheater
             FieldReference ActorHealth = ActorClass.Fields.First<FieldReference>(f => f.Name == "health");// Finds health for reference
             FieldReference ActorAiControlled = ActorClass.Fields.First<FieldReference>(f => f.Name == "aiControlled");// Finds aiControlled for reference
 
-            
+
 
             // Inserts a if statment to check if Actor is AI, if not, make health 1000f
             Instruction[] instructions = processor.Body.Instructions.ToArray();
@@ -317,34 +357,7 @@ namespace RavenfieldCheater
             Application.DoEvents();
         }
 
-        private void SecretWeapons_Click(object sender, EventArgs e)
-        {
-            if (filePath == null) { MessageBox.Show("Please select the folder Ravenfield is in."); return; }
-
-            assembly = ModuleDefinition.ReadModule(filePath); // Load Assembly-CSharp.dll
-
-            TypeDefinition WeaponManagerClass = assembly.Types.First(t => t.Name == "WeaponManager"); // Finds WeaponManager class (no namespace) in Assembly-CSharp.dll
-            if (WeaponManagerClass == null) // If WeaponManager does not exist, stop
-            {
-                MessageBox.Show("WeaponManager Class Class Not Found!");
-                return;
-            }
-            Application.DoEvents(); // Lets the program catch up
-
-            MethodDefinition AwakeMethod = WeaponManagerClass.Methods.First(m => m.Name == "Awake"); // Finds WeaponManager.Awake()
-            if (AwakeMethod == null) // If WeaponManager.Awake() does not exist, stop
-            {
-                MessageBox.Show("WeaponManager.Awake() Method Not Found!");
-                return;
-            }
-            Application.DoEvents();
-
-            ILProcessor processor = AwakeMethod.Body.GetILProcessor();
-
-            Instruction[] instructions = processor.Body.Instructions.ToArray();
-        }
-
-        private void label1_Click(object sender, EventArgs e)
+        private void RavenfieldCheater_Load(object sender, EventArgs e)
         {
 
         }
