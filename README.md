@@ -7,7 +7,7 @@ A client that changes the Ravenfield source code with a press of a button to all
 - [x] Icon
 - [x] Infinite Health
 - [x] Infinite Ammo
-- ~~[ ] Levels Folder Re-Add~~
+- [ ] ~~Levels Folder Re-Add~~
 - [ ] Secret Weapons Unlocked
 - [ ] Mac/Linux Support
 
