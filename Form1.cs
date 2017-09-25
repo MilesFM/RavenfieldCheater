@@ -372,6 +372,7 @@ namespace RavenfieldCheater
 
         private void SecretWeapons_Click(object sender, EventArgs e)
         {
+            /*
             if (filePath == null) { MessageBox.Show("Please select the folder Ravenfield is in."); return; }
 
             assembly = ModuleDefinition.ReadModule(filePath); // Load Assembly-CSharp.dll
@@ -395,6 +396,7 @@ namespace RavenfieldCheater
             ILProcessor processor = AwakeMethod.Body.GetILProcessor();
 
             Instruction[] instructions = processor.Body.Instructions.ToArray();
+            */
         }
 
         private void label1_Click(object sender, EventArgs e)
