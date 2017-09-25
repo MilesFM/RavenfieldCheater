@@ -182,14 +182,28 @@ namespace RavenfieldCheater
             }
             Application.DoEvents(); // Lets the program catch up
 
-            MethodDefinition UpdateMethod = WeaponClass.Methods.First(m => m.Name == "Update"); // Finds Weapon.Update()
-            if (UpdateMethod == null) // If Weapon.Update() does not exist, stop
+            MethodDefinition LateUpdateMethod;
+
+            // Does Weapon.LateUpdate() exist?
+            try
             {
-                MessageBox.Show("Weapon.Update() Method Not Found!");
-                return;
+                WeaponClass.Methods.First<MethodReference>(m => m.Name == "LateUpdate");
+            }
+            catch (Exception exc)
+            {
+                // Creates Weapon.LateUpdate()
+                LateUpdateMethod = new MethodDefinition("LateUpdate", MethodAttributes.Public, assembly.TypeSystem.Void);
+                WeaponClass.Methods.Add(LateUpdateMethod);
+                LateUpdateMethod.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+                goto skip;
             }
 
-            ILProcessor processor = UpdateMethod.Body.GetILProcessor();
+            MessageBox.Show("Actor.LateUpdate() exists already. This may cause problems down the line.");
+            LateUpdateMethod = WeaponClass.Methods.First<MethodDefinition>(m => m.Name == "LateUpdate");
+            Application.DoEvents();
+
+        skip:
+            ILProcessor processor = LateUpdateMethod.Body.GetILProcessor();
 
             FieldReference WeaponAmmo = WeaponClass.Fields.First<FieldReference>(f => f.Name == "ammo");// Finds ammo for reference
             MethodReference WeaponUserIsPlayer;
@@ -233,7 +247,6 @@ namespace RavenfieldCheater
                 WeaponUserIsPlayer = WeaponClass.Methods.First<MethodReference>(m => m.Name == "UserIsPlayer");
             }
 
-
             // Inserts a if statment to check if Actor is Player, if so, make ammo 1000
             Instruction[] instructions = processor.Body.Instructions.ToArray();
 
@@ -262,18 +275,6 @@ namespace RavenfieldCheater
             insertInstruc = processor.Create(OpCodes.Ldarg_0);
             processor.InsertBefore(lastInstruc, insertInstruc);
 
-            // So the if loop doesn't end up in another if statement
-            Instruction LastIf = instructions[instructions.Length - 4];
-            //Instruction LastIf = instructions[57];
-            //MessageBox.Show(instructions[instructions.Length-4].ToString());
-            Application.DoEvents();
-            if (LastIf.OpCode == OpCodes.Brfalse || LastIf.OpCode == OpCodes.Brtrue)
-            {
-                Instruction replace = LastIf;
-                replace.Operand = insertInstruc;
-                processor.Replace(LastIf, replace);
-            }
-
             try
             {
                 assembly.Write(filePath); // Try to write it back to Assembly-CSharp.dll
@@ -301,15 +302,28 @@ namespace RavenfieldCheater
             }
             Application.DoEvents(); // Lets the program catch up
 
-            MethodDefinition UpdateMethod = ActorClass.Methods.First(m => m.Name == "Update"); // Finds Actor.Update()
-            if (UpdateMethod == null) // If Actor.Update() does not exist, stop
+            MethodDefinition LateUpdateMethod;
+
+            // Does Actor.LateUpdate() exist?
+            try
             {
-                MessageBox.Show("Actor.Update() Method Not Found!");
-                return;
+                ActorClass.Methods.First<MethodReference>(m => m.Name == "LateUpdate");
             }
+            catch (Exception exc)
+            {
+                // Creates Actor.LateUpdate()
+                LateUpdateMethod = new MethodDefinition("LateUpdate", MethodAttributes.Public, assembly.TypeSystem.Void);
+                ActorClass.Methods.Add(LateUpdateMethod);
+                LateUpdateMethod.Body.Instructions.Add(Instruction.Create(OpCodes.Ret));
+                goto skip;
+            }
+
+            MessageBox.Show("Actor.LateUpdate() exists already. This may cause problems down the line.");
+            LateUpdateMethod = ActorClass.Methods.First<MethodDefinition>(m => m.Name == "LateUpdate");
             Application.DoEvents();
 
-            ILProcessor processor = UpdateMethod.Body.GetILProcessor();
+        skip:
+            ILProcessor processor = LateUpdateMethod.Body.GetILProcessor();
 
             FieldReference ActorHealth = ActorClass.Fields.First<FieldReference>(f => f.Name == "health");// Finds health for reference
             FieldReference ActorAiControlled = ActorClass.Fields.First<FieldReference>(f => f.Name == "aiControlled");// Finds aiControlled for reference

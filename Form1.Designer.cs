@@ -38,7 +38,6 @@
             this.Fast = new System.Windows.Forms.Button();
             this.Ammo = new System.Windows.Forms.Button();
             this.Health = new System.Windows.Forms.Button();
-            this.LevelsFolder = new System.Windows.Forms.Button();
             this.SecretWeapons = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -133,18 +132,9 @@
             this.Health.UseVisualStyleBackColor = true;
             this.Health.Click += new System.EventHandler(this.Health_Click);
             // 
-            // LevelsFolder
-            // 
-            this.LevelsFolder.Location = new System.Drawing.Point(252, 191);
-            this.LevelsFolder.Name = "LevelsFolder";
-            this.LevelsFolder.Size = new System.Drawing.Size(180, 23);
-            this.LevelsFolder.TabIndex = 9;
-            this.LevelsFolder.Text = "Levels Folder Re-Add (WIP)";
-            this.LevelsFolder.UseVisualStyleBackColor = true;
-            // 
             // SecretWeapons
             // 
-            this.SecretWeapons.Location = new System.Drawing.Point(66, 191);
+            this.SecretWeapons.Location = new System.Drawing.Point(170, 191);
             this.SecretWeapons.Name = "SecretWeapons";
             this.SecretWeapons.Size = new System.Drawing.Size(180, 23);
             this.SecretWeapons.TabIndex = 10;
@@ -158,7 +148,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(506, 240);
             this.Controls.Add(this.SecretWeapons);
-            this.Controls.Add(this.LevelsFolder);
             this.Controls.Add(this.Health);
             this.Controls.Add(this.Ammo);
             this.Controls.Add(this.Fast);
@@ -187,7 +176,6 @@
         private System.Windows.Forms.Button Fast;
         private System.Windows.Forms.Button Ammo;
         private System.Windows.Forms.Button Health;
-        private System.Windows.Forms.Button LevelsFolder;
         private System.Windows.Forms.Button SecretWeapons;
     }
 }
