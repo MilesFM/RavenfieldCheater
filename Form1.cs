@@ -16,6 +16,7 @@ namespace RavenfieldCheater
     public partial class RavenfieldCheater : Form
     {
         private string filePath;
+        private string originalPath;
         ModuleDefinition assembly;
         public RavenfieldCheater()
         {
@@ -25,10 +26,11 @@ namespace RavenfieldCheater
         private void button1_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog selectDLL = new FolderBrowserDialog();
-            selectDLL.Description = "Please find the folder Ravenfield is in. e.g. Desktop if ravenfield_Data is in that folder.";
+            selectDLL.Description = "Please find ravenfield_Data in Ravenfield folder if on Windows/Linux or Data in Mac ravenfield.app/Contet/Resources.";
             if (selectDLL.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                filePath = selectDLL.SelectedPath + "\\ravenfield_Data\\Managed\\Assembly-CSharp.dll"; // Where RF stores it's source code
+                originalPath = selectDLL.SelectedPath; // In case we need to access any other DLLs/Resources
+                filePath = originalPath + "\\Managed\\Assembly-CSharp.dll"; // Where RF stores it's source code
             }
         }
 
@@ -122,6 +124,7 @@ namespace RavenfieldCheater
             if (filePath == null) { MessageBox.Show("Please select the folder Ravenfield is in."); return; }
 
             assembly = ModuleDefinition.ReadModule(filePath); // Load Assembly-CSharp.dll
+            ModuleDefinition UnityDLL = ModuleDefinition.ReadModule(originalPath + "\\Managed\\UnityEngine.dll"); // Load UnityEngine for referencing
 
             TypeDefinition FpsActorControllerClass = assembly.Types.First(t => t.Name == "FpsActorController"); // Finds FpsActorController class (no namespace) in Assembly-CSharp.dll
             if (FpsActorControllerClass == null) // If FpsActorController does not exist, stop
@@ -141,7 +144,17 @@ namespace RavenfieldCheater
 
             ILProcessor processor = UpdateMethod.Body.GetILProcessor();
 
-            Instruction original = processor.Body.Instructions[212];
+            Instruction original;
+
+            MethodReference timeScaleRef = assembly.Import(typeof(UnityEngine.Time).GetMethod("get_timeScale", new[] { typeof(UnityEngine.Object), typeof(UnityEngine.Object) }));
+            foreach (var instuction in processor.Body.Instructions)
+            {
+                if (instuction.Operand == timeScaleRef)
+                {
+                    original = instuction;
+                }
+            }
+            //original = processor.Body.Instructions[212];
 
             // Changes if (Time.timeScale < 1f) to a > sign
             Instruction replace = original;
