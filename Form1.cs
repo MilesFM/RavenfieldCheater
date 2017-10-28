@@ -146,15 +146,16 @@ namespace RavenfieldCheater
 
             Instruction original;
 
+            original = processor.Body.Instructions[212];
+
             MethodReference timeScaleRef = assembly.Import(typeof(UnityEngine.Time).GetMethod("get_timeScale", new[] { typeof(UnityEngine.Object), typeof(UnityEngine.Object) }));
             foreach (var instuction in processor.Body.Instructions)
             {
                 if (instuction.Operand == timeScaleRef)
                 {
-                    original = instuction;
+                    //original = instuction;
                 }
             }
-            //original = processor.Body.Instructions[212];
 
             // Changes if (Time.timeScale < 1f) to a > sign
             Instruction replace = original;
