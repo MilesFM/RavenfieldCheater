@@ -153,8 +153,7 @@ namespace RavenfieldCheater
             {
                 if (instuction.Operand == timeScaleRef)
                 {
-                    original = instuction.Next;
-                    original = original.Next;
+                    //original = instuction;
                 }
             }
 
@@ -164,15 +163,7 @@ namespace RavenfieldCheater
 
             processor.Replace(original, replace);
 
-            //original = processor.Body.Instructions[216];
-            original = original.Next;
-            original = original.Next;
-            original = original.Next;
-            original = original.Next;
-            /*for (int i = i; i <= 4; i++)
-            {
-                original = original.Next;
-            }*/
+            original = processor.Body.Instructions[216];
 
             // Changes Time.timeScale = 0.2f; to 2.
             replace = original;
